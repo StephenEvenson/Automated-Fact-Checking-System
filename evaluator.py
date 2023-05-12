@@ -1,6 +1,6 @@
 from sentence_transformers.evaluation import SentenceEvaluator
 
-from predict import get_top_k
+from predict import get_top_k, get_final_k
 from preprocess import get_dev_data, get_evidence_data
 
 
@@ -32,4 +32,29 @@ class RetrieveNgEvaluator(SentenceEvaluator):
         return sum(f1) / len(f1)
 
 
+class RerankEvaluator(SentenceEvaluator):
+    def __init__(self, retrieve_model, final_k=5):
+        self.dev_data = get_dev_data()
+        self.dev_claims = [data['claim_text'] for data in self.dev_data.values()]
+        self.evidence_data = get_evidence_data()
+        self.dev_evidences = list(self.evidence_data.values())
+        self.final_k = final_k
+        self.retrieve_model = retrieve_model
+        self.top_k_indices = get_top_k(self.retrieve_model, self.dev_claims, self.dev_evidences,
+                                       top_k=10, refresh=False)
 
+    def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
+        final_k_indices = get_final_k(model, self.dev_claims, self.dev_evidences, self.top_k_indices, final_k=5)
+        acc, recall, f1 = [], [], []
+        for index, (claim_id, data) in enumerate(self.dev_data.items()):
+            true_evidences = [int(evidence[len("evidence-"):]) for evidence in data['evidences']]
+            correct = len(set(true_evidences).intersection(set(final_k_indices[index])))
+
+            acc.append(correct / self.final_k)
+            recall.append(correct / len(true_evidences))
+            f1.append(2 * acc[-1] * recall[-1] / (acc[-1] + recall[-1]) if acc[-1] + recall[-1] > 0 else 0)
+
+        print("Retrieve evaluator accuracy: ", sum(acc) / len(acc))
+        print("Retrieve evaluator recall: ", sum(recall) / len(recall))
+        print("Retrieve evaluator f1: ", sum(f1) / len(f1))
+        return sum(f1) / len(f1)

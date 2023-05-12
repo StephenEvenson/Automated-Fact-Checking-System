@@ -24,3 +24,20 @@ def get_top_k(model, query, corpus, top_k=10, refresh=False):
         tok_k_indices.append([corpus['corpus_id'] for corpus in hit])
 
     return tok_k_indices
+
+
+def get_final_k(model, query, corpus, top_k_indices, final_k=5):
+    cross_inp = [[query[i], corpus[top_k_indices[i][j]]]
+                 for i in range(len(query))
+                 for j in range(len(top_k_indices[i]))]
+    cross_scores = model.predict(cross_inp)
+
+    top_k = len(top_k_indices[0])
+    final_k_indices = []
+    for i in range(len(query)):
+        final_k_indices.append(top_k_indices[i][cross_scores[i * top_k:(i + 1) * top_k].argsort()[-final_k:][::-1]])
+
+    return final_k_indices
+
+
+

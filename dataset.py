@@ -34,9 +34,39 @@ class RetrieveTrainDataset(Dataset):
         return self.train_examples[idx]
 
 
-def get_train_dataloader(model, shuffle=True, batch_size=125):
+def get_retrieve_train_dataloader(model, shuffle=True, batch_size=125):
     dataset = RetrieveTrainDataset(model=model)
     return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)
 
 
+class RerankTrainDataset(Dataset):
+    def __init__(self, retrieve_model):
+        self.train_data = get_train_data()
+        self.evidence_data = get_evidence_data()
+        query = [data['claim_text'] for data in self.train_data.values()]
+        corpus = list(self.evidence_data.values())
+        print("Retrieving top k evidences for training data...")
+        self.top_k_indices = get_top_k(retrieve_model, query, corpus, top_k=10, refresh=False)
 
+        train_examples = []
+        for index, (claim_id, data) in enumerate(self.train_data.items()):
+            claim_text = data['claim_text']
+            ng_evidences = ["evidence-" + str(evidence_index) for evidence_index in self.top_k_indices[index]
+                            if "evidence-" + str(evidence_index) not in data['evidences']]
+            for i in range(len(data['evidences'])):
+                evidence_text = self.evidence_data[data['evidences'][i]]
+                ng_evidence_text = ng_evidences[i]
+                train_examples.append(InputExample(texts=[claim_text, evidence_text], label=1))
+                train_examples.append(InputExample(texts=[claim_text, ng_evidence_text], label=0))
+        self.train_examples = np.array(train_examples)
+
+    def __len__(self):
+        return len(self.train_examples)
+
+    def __getitem__(self, idx):
+        return self.train_examples[idx]
+
+
+def get_rerank_train_dataloader(retrieve_model, shuffle=True, batch_size=125):
+    dataset = RerankTrainDataset(retrieve_model=retrieve_model)
+    return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)
