@@ -24,7 +24,7 @@ class RetrieveNgEvaluator(SentenceEvaluator):
 
             acc.append(correct / self.top_k)
             recall.append(correct / len(true_evidences))
-            f1.append(2 * acc[-1] * recall[-1] / (acc[-1] + recall[-1]))
+            f1.append(2 * acc[-1] * recall[-1] / (acc[-1] + recall[-1]) if acc[-1] + recall[-1] > 0 else 0)
 
         print("Retrieve evaluator accuracy: ", sum(acc) / len(acc))
         print("Retrieve evaluator recall: ", sum(recall) / len(recall))
