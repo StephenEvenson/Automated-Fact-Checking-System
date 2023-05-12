@@ -19,6 +19,5 @@ def retrieve_train(epochs=1000):
         output_path='output/retrieve_train',
         save_best_model=True,
         use_amp=True,
-        optimizer_params={'lr': 1e-5},
         show_progress_bar=True,
     )

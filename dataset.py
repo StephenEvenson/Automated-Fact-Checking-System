@@ -36,6 +36,7 @@ class RetrieveTrainDataset(Dataset):
 
 def get_train_dataloader(model, shuffle=True, batch_size=125):
     dataset = RetrieveTrainDataset(model=model)
+    print("Number of training dataset: ", len(dataset))
     return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)
 
 
