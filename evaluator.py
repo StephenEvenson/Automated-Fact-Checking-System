@@ -15,18 +15,20 @@ class RetrieveNgEvaluator(SentenceEvaluator):
     # calculate the recall, accuracy, and f1 score in the dev set
     def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
         top_k_indices = get_top_k(model, self.dev_claims, self.dev_evidences,
-                                  top_k=self.top_k, pre_train=False, refresh=True)
+                                  top_k=self.top_k, refresh=True)
 
-        recall = []
+        acc, recall, f1 = [], [], []
         for index, (claim_id, data) in enumerate(self.dev_data.items()):
             true_evidences = [int(evidence[len("evidence-"):]) for evidence in data['evidences']]
             correct = len(set(true_evidences).intersection(set(top_k_indices[index])))
 
-            # acc.append(correct / self.top_k)
+            acc.append(correct / self.top_k)
             recall.append(correct / len(true_evidences))
-            # f1.append(2 * acc[-1] * recall[-1] / (acc[-1] + recall[-1]))
+            f1.append(2 * acc[-1] * recall[-1] / (acc[-1] + recall[-1]))
 
+        print("Retrieve evaluator accuracy: ", sum(acc) / len(acc))
         print("Retrieve evaluator recall: ", sum(recall) / len(recall))
+        print("Retrieve evaluator f1: ", sum(f1) / len(f1))
         return sum(recall) / len(recall)
 
 
