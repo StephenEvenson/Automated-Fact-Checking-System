@@ -21,7 +21,6 @@ def retrieve_train(epochs=500):
     for epoch in range(0, epochs, evaluation_epochs):
         bi_encoder.fit(
             train_objectives=[(dataloader, loss_function)],
-            evaluator=evaluator,
             epochs=evaluation_epochs,
             warmup_steps=100,
             use_amp=True,
@@ -31,5 +30,8 @@ def retrieve_train(epochs=500):
         if f1 > best_f1:
             best_f1 = f1
             bi_encoder.save(model_path)
+
+#
+# def rerank_train():
 
 
