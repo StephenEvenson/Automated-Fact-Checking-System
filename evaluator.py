@@ -29,7 +29,7 @@ class RetrieveNgEvaluator(SentenceEvaluator):
         print("Retrieve evaluator accuracy: ", sum(acc) / len(acc))
         print("Retrieve evaluator recall: ", sum(recall) / len(recall))
         print("Retrieve evaluator f1: ", sum(f1) / len(f1))
-        return sum(recall) / len(recall)
+        return sum(f1) / len(f1)
 
 
 

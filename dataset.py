@@ -13,7 +13,7 @@ class RetrieveTrainDataset(Dataset):
         query = [data['claim_text'] for data in self.train_data.values()]
         corpus = list(self.evidence_data.values())
         print("Retrieving top k evidences for training data...")
-        self.top_k_indices = get_top_k(model, query, corpus, top_k=10, refresh=False)
+        self.top_k_indices = get_top_k(model, query, corpus, top_k=10, refresh=True)
 
         train_examples = []
         for index, (claim_id, data) in enumerate(self.train_data.items()):
@@ -36,7 +36,6 @@ class RetrieveTrainDataset(Dataset):
 
 def get_train_dataloader(model, shuffle=True, batch_size=125):
     dataset = RetrieveTrainDataset(model=model)
-    print("Number of training dataset: ", len(dataset))
     return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)
 
 
