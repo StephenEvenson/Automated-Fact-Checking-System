@@ -107,6 +107,7 @@ def get_test_claim_result():
             "evidences": [f"evidence-{x}" for x in final_k_indices[index]]
         }
 
+    print("Writing predictions to file...")
     with open("test-claims-predictions.json", "w") as outfile:
         json.dump(test_preds, outfile)
 
