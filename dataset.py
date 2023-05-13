@@ -95,6 +95,11 @@ class ClassifierTrainDataset(Dataset):
                                                    label=label_mapping[data['claim_label']]))
         self.train_examples = np.array(train_examples)
 
+    def __len__(self):
+        return len(self.train_examples)
+
+    def __getitem__(self, idx):
+        return self.train_examples[idx]
 
 def get_classifier_train_dataloader(shuffle=True, batch_size=125):
     dataset = ClassifierTrainDataset()
