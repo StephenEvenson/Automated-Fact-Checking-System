@@ -81,15 +81,15 @@ class ClassifierEvaluator(SentenceEvaluator):
         true_labels = []
         for index, (claim_id, data) in enumerate(self.dev_data.items()):
             claim_text = data['claim_text']
-            true_labels.append(label_mapping[data['claim_label']])
             for evidence_index in data['evidences']:
                 sentence_pair = [claim_text, self.evidence_data[evidence_index]]
                 texts.append(sentence_pair)
+                true_labels.append(label_mapping[data['claim_label']])
         classification = get_classification(model, texts)
         true_labels = np.array(true_labels)
 
         print(classification)
-        print(true_labels)
+        # print(true_labels)
         score = np.sum(classification == true_labels).item() / len(true_labels)
         print("Classifier evaluator accuracy: ", score)
 
