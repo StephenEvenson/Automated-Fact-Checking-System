@@ -3,7 +3,7 @@ from train import retrieve_train, rerank_train
 
 
 def main():
-    retrieve_train(epochs=100)
+    retrieve_train(epochs=20)
     rerank_train(epochs=60)
 
 
