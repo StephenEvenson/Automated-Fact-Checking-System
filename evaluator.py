@@ -1,6 +1,6 @@
 from sentence_transformers.evaluation import SentenceEvaluator
 
-from predict import get_top_k, get_final_k
+from predict import get_top_k, get_final_k, get_classification
 from preprocess import get_dev_data, get_evidence_data
 
 
@@ -58,3 +58,22 @@ class RerankEvaluator(SentenceEvaluator):
         print("Retrieve evaluator recall: ", sum(recall) / len(recall))
         print("Retrieve evaluator f1: ", sum(f1) / len(f1))
         return sum(f1) / len(f1)
+
+
+class ClassifierEvaluator(SentenceEvaluator):
+    def __init__(self):
+        self.dev_data = get_dev_data()
+        self.dev_claims = [data['claim_text'] for data in self.dev_data.values()]
+        self.evidence_data = get_evidence_data()
+        self.dev_evidences = list(self.evidence_data.values())
+
+    def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
+        texts = []
+        for index, (claim_id, data) in enumerate(self.dev_data.items()):
+            claim_text = data['claim_text']
+            for evidence_index in data['evidences']:
+                sentence_pair = [claim_text, self.evidence_data[evidence_index]]
+                texts.append(sentence_pair)
+        classification = get_classification(model, texts, refresh=True)
+
+        return 0.0

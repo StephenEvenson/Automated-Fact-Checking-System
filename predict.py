@@ -1,3 +1,4 @@
+import json
 import os
 import pickle
 
@@ -26,7 +27,11 @@ def get_top_k(model, query, corpus, top_k=10, refresh=False):
     return tok_k_indices
 
 
-def get_final_k(model, query, corpus, top_k_indices, final_k=5):
+def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
+    if not refresh and os.path.exists('data/final_k_indices.json'):
+        final_k_indices = json.load(open('data/final_k_indices.json', 'r'))
+        return final_k_indices
+
     cross_inp = [[query[i], corpus[top_k_indices[i][j]]]
                  for i in range(len(query))
                  for j in range(len(top_k_indices[i]))]
@@ -37,7 +42,16 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5):
     for i in range(len(query)):
         final_k_indices.append(top_k_indices[i][cross_scores[i * top_k:(i + 1) * top_k].argsort()[-final_k:][::-1]])
 
+    json.dump(final_k_indices, open('data/final_k_indices.json', 'w'))
     return final_k_indices
 
 
+def get_classification(model, texts, refresh=False):
+    if not refresh and os.path.exists('data/classification.json'):
+        classification = json.load(open('data/classification.json', 'r'))
+        return classification
 
+    classification = model.predict(texts)
+    print(classification[0])
+    json.dump(classification, open('data/classification.json', 'w'))
+    return classification

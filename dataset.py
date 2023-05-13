@@ -2,7 +2,7 @@ import numpy as np
 from sentence_transformers import InputExample
 from torch.utils.data import Dataset, DataLoader
 
-from predict import get_top_k
+from predict import get_top_k, get_final_k
 from preprocess import get_train_data, get_evidence_data
 
 
@@ -69,4 +69,33 @@ class RerankTrainDataset(Dataset):
 
 def get_rerank_train_dataloader(retrieve_model, shuffle=True, batch_size=125):
     dataset = RerankTrainDataset(retrieve_model=retrieve_model)
+    return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)
+
+
+class ClassifierTrainDataset(Dataset):
+    def __init__(self):
+        self.train_data = get_train_data()
+        self.evidence_data = get_evidence_data()
+
+        label_mapping = {
+            'SUPPORTS': 0,
+            'REFUTES': 1,
+            'NOT_ENOUGH_INFO': 2,
+            'DISPUTED': 3
+        }
+
+        idx_to_label = ['SUPPORTS', 'REFUTES', 'NOT_ENOUGH_INFO', 'DISPUTED']
+
+        train_examples = []
+        for claim_id, data in self.train_data.items():
+            claim_text = data['claim_text']
+            for evidence_index in data['evidences']:
+                evidence_text = self.evidence_data[evidence_index]
+                train_examples.append(InputExample(texts=[claim_text, evidence_text],
+                                                   label=label_mapping[data['label']]))
+        self.train_examples = np.array(train_examples)
+
+
+def get_classifier_train_dataloader(shuffle=True, batch_size=125):
+    dataset = ClassifierTrainDataset()
     return DataLoader(dataset, shuffle=shuffle, batch_size=batch_size)

@@ -1,10 +1,12 @@
 import os.path
 
+import torch
 from sentence_transformers import SentenceTransformer, losses, CrossEncoder
 from tqdm import tqdm
+from transformers import RobertaForSequenceClassification, RobertaTokenizer
 
-from dataset import get_retrieve_train_dataloader, get_rerank_train_dataloader
-from evaluator import RetrieveNgEvaluator, RerankEvaluator
+from dataset import get_retrieve_train_dataloader, get_rerank_train_dataloader, get_classifier_train_dataloader
+from evaluator import RetrieveNgEvaluator, RerankEvaluator, ClassifierEvaluator
 
 
 def retrieve_train(epochs=100):
@@ -59,6 +61,29 @@ def rerank_train(epochs=60):
     )
 
 
+def classifier_train(epochs=10):
+    model_path = 'output/classifier_model'
+    model_name = 'roberta-large'
+    if os.path.exists(model_path):
+        print("Loading pretrained model from {}".format(model_path))
+        classifier_model = CrossEncoder(model_path, num_labels=4)
+    else:
+        classifier_model = CrossEncoder(model_name, num_labels=4)
+    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=125)
+    evaluator = ClassifierEvaluator()
+    print("Start training...")
+    evaluator(classifier_model)
+    classifier_model.fit(
+        train_dataloader=dataloader,
+        evaluator=evaluator,
+        evaluation_steps=100,
+        epochs=epochs,
+        warmup_steps=100,
+        use_amp=True,
+        show_progress_bar=True,
+        output_path=model_path,
+        save_best_model=True
+    )
 
 
 
