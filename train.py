@@ -61,13 +61,13 @@ def rerank_train(epochs=60):
 
 def classifier_train(epochs=10, load_old_model=False):
     model_path = 'output/classifier_model'
-    model_name = 'roberta-large'
+    model_name = 'distilbert-base-uncased'
     if os.path.exists(model_path) and load_old_model:
         print("Loading pretrained model from {}".format(model_path))
         classifier_model = CrossEncoder(model_path, num_labels=4, max_length=256)
     else:
         classifier_model = CrossEncoder(model_name, num_labels=4, max_length=256)
-    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=64)
+    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=125)
     evaluator = ClassifierEvaluator()
     print("Start classifier training...")
     evaluator(classifier_model)
