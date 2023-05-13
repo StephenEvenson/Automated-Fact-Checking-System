@@ -3,8 +3,8 @@ from train import retrieve_train, rerank_train, classifier_train
 
 
 def main():
-    # retrieve_train(epochs=20)
-    # rerank_train(epochs=60)
+    retrieve_train(epochs=20)
+    rerank_train(epochs=60)
     classifier_train(epochs=10)
 
 
