@@ -108,7 +108,7 @@ def get_test_claim_result():
         }
 
     print("Writing predictions to file...")
-    with open("test-claims-predictions.json", "w") as outfile:
+    with open("output/test-claims-predictions.json", "w") as outfile:
         json.dump(test_preds, outfile)
 
 
