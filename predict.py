@@ -40,9 +40,10 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
 
     top_k = len(top_k_indices[0])
     final_k_indices = []
+    top_k_indices = np.array(top_k_indices)
     for i in range(len(query)):
         print(cross_scores[i * top_k:(i + 1) * top_k].argsort().astype(int)[-final_k:][::-1])
-        final_k_indices.append(top_k_indices[i][cross_scores[i * top_k:(i + 1) * top_k].argsort().astype(int)[-final_k:][::-1]])
+        final_k_indices.append(top_k_indices[i][cross_scores[i * top_k:(i + 1) * top_k].argsort()[-final_k:][::-1]])
 
     json.dump(final_k_indices, open('data/final_k_indices.json', 'w'))
     return final_k_indices
