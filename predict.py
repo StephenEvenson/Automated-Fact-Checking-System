@@ -46,12 +46,8 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
     return final_k_indices
 
 
-def get_classification(model, texts, refresh=False):
-    if not refresh and os.path.exists('data/classification.json'):
-        classification = json.load(open('data/classification.json', 'r'))
-        return classification
+def get_classification(model, texts):
 
-    classification = model.predict(texts)
-    print(classification[0])
-    json.dump(classification, open('data/classification.json', 'w'))
+    classification_scores = model.predict(texts)
+    classification = torch.argmax(classification_scores)
     return classification

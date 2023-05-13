@@ -1,7 +1,15 @@
+import torch
 from sentence_transformers.evaluation import SentenceEvaluator
 
 from predict import get_top_k, get_final_k, get_classification
 from preprocess import get_dev_data, get_evidence_data
+
+label_mapping = {
+    'SUPPORTS': 0,
+    'REFUTES': 1,
+    'NOT_ENOUGH_INFO': 2,
+    'DISPUTED': 3
+}
 
 
 class RetrieveNgEvaluator(SentenceEvaluator):
@@ -69,11 +77,17 @@ class ClassifierEvaluator(SentenceEvaluator):
 
     def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
         texts = []
+        true_labels = []
         for index, (claim_id, data) in enumerate(self.dev_data.items()):
             claim_text = data['claim_text']
+            true_labels.append(label_mapping[data['label']])
             for evidence_index in data['evidences']:
                 sentence_pair = [claim_text, self.evidence_data[evidence_index]]
                 texts.append(sentence_pair)
-        classification = get_classification(model, texts, refresh=True)
+        classification = get_classification(model, texts)
+        true_labels = torch.tensor(true_labels)
 
-        return 0.0
+        score = torch.sum(classification == true_labels).item() / len(true_labels)
+        print("Classifier evaluator accuracy: ", score)
+
+        return score
