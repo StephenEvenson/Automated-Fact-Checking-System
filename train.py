@@ -34,11 +34,11 @@ def retrieve_train(epochs=100):
             bi_encoder.save(model_path)
 
 
-def rerank_train(epochs=60):
+def rerank_train(epochs=60, load_old_model=False):
     model_path = 'output/rerank_model'
     retrieve_model_path = 'output/retrieve_model'
     bi_encoder = SentenceTransformer(retrieve_model_path)
-    if os.path.exists(model_path):
+    if os.path.exists(model_path) and load_old_model:
         print("Loading pretrained model from {}".format(model_path))
         cross_encoder = CrossEncoder(model_path, num_labels=1)
     else:
