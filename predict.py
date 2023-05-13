@@ -55,7 +55,7 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
     for i in range(len(query)):
         query_evidence_scores = cross_scores[i * top_k:(i + 1) * top_k]
         final_k_scores = query_evidence_scores.argsort()[-final_k:][::-1]
-        final_k_indices.append(top_k_indices[i][final_k_scores + i * top_k])
+        final_k_indices.append(top_k_indices[i][final_k_scores])
 
     np.save('data/final_k_indices.npy', final_k_indices)
     return final_k_indices
@@ -109,7 +109,6 @@ def get_test_claim_result():
 
     with open("test-claims-predictions.json", "w") as outfile:
         json.dump(test_preds, outfile)
-
 
 
 def sigmoid(x):
