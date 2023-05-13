@@ -57,7 +57,7 @@ class RerankTrainDataset(Dataset):
                 evidence_text = self.evidence_data[data['evidences'][i]]
                 train_examples.append(InputExample(texts=[claim_text, evidence_text], label=1))
             for i in range(len(ng_evidences)):
-                ng_evidence_text = ng_evidences[i]
+                ng_evidence_text = self.evidence_data[ng_evidences[i]]
                 train_examples.append(InputExample(texts=[claim_text, ng_evidence_text], label=0))
         self.train_examples = np.array(train_examples)
 
