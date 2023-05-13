@@ -46,7 +46,7 @@ class RerankTrainDataset(Dataset):
         query = [data['claim_text'] for data in self.train_data.values()]
         corpus = list(self.evidence_data.values())
         print("Retrieving top k evidences for training data...")
-        self.top_k_indices = get_top_k(retrieve_model, query, corpus, top_k=100, refresh=False)
+        self.top_k_indices = get_top_k(retrieve_model, query, corpus, top_k=200, refresh=False)
 
         train_examples = []
         for index, (claim_id, data) in enumerate(self.train_data.items()):

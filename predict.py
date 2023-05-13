@@ -66,7 +66,7 @@ def get_classification(model, texts):
 
 
 def get_test_claim_result():
-    top_k = 100
+    top_k = 200
     final_k = 5
     print("Loading models...")
     retrieve_model_path = 'output/retrieve_model'

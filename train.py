@@ -16,7 +16,7 @@ def retrieve_train(epochs=100):
         bi_encoder = SentenceTransformer('distilbert-base-uncased')
     dataloader = get_retrieve_train_dataloader(bi_encoder, shuffle=True, batch_size=125)
     loss_function = losses.MultipleNegativesRankingLoss(model=bi_encoder)
-    evaluator = RetrieveNgEvaluator(top_k=100)
+    evaluator = RetrieveNgEvaluator(top_k=200)
     print("Start retrieve training...")
     evaluation_epochs = 20
     best_f1 = evaluator(bi_encoder)

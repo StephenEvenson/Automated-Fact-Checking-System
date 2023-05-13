@@ -49,7 +49,7 @@ class RerankEvaluator(SentenceEvaluator):
         self.final_k = final_k
         self.retrieve_model = retrieve_model
         self.top_k_indices = get_top_k(self.retrieve_model, self.dev_claims, self.dev_evidences,
-                                       top_k=100, refresh=False)
+                                       top_k=200, refresh=False)
 
     def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
         final_k_indices = get_final_k(model, self.dev_claims, self.dev_evidences,
