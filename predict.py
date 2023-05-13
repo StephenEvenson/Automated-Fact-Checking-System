@@ -6,7 +6,7 @@ import numpy as np
 import torch.cuda
 from sentence_transformers import util, SentenceTransformer, CrossEncoder
 
-from preprocess import get_test_data, get_raw_test_data, get_evidence_data
+from preprocess import get_test_data, get_raw_test_data, get_evidence_data, get_dev_data
 
 label_mapping = {
     'SUPPORTS': 0,
@@ -66,6 +66,49 @@ def get_classification(model, texts):
     classification = np.argmax(classification_scores, axis=1)
     return classification
 
+def get_dev_claim_result():
+    top_k = 200
+    final_k = 5
+    print("Loading models...")
+    retrieve_model_path = 'output/retrieve_model'
+    rerank_model_path = 'output/rerank_model'
+    classifier_model_path = 'output/classifier_model'
+
+    dev_data = get_dev_data()
+    dev_claims = [data['claim_text'] for data in dev_data.values()]
+    evidence_data = get_evidence_data()
+    dev_evidences = list(evidence_data.values())
+
+    top_k_indices = get_top_k(SentenceTransformer(retrieve_model_path), dev_claims,
+                              dev_evidences, top_k=top_k, refresh=False)
+    final_k_indices = get_final_k(CrossEncoder(rerank_model_path, num_labels=1, max_length=256), dev_claims,
+                                  dev_evidences, top_k_indices, final_k=final_k, refresh=False)
+
+    texts = []
+    for index, (claim_id, data) in enumerate(dev_data.items()):
+        claim_text = data['claim_text']
+        for evidence_index in final_k_indices[index]:
+            sentence_pair = [claim_text, evidence_data['evidence-' + str(evidence_index)]]
+            texts.append(sentence_pair)
+
+    classifier_model = CrossEncoder(classifier_model_path, num_labels=4, max_length=256)
+    classification_score = classifier_model.predict(texts)
+    classification_score = sigmoid(classification_score)
+    merged_arr = np.mean(classification_score.reshape(-1, final_k, 4), axis=1)
+    classification = np.argmax(merged_arr, axis=1)
+
+    dev_preds = {}
+    for index, (claim_id, pred) in enumerate(zip(dev_data.keys(), classification)):
+        dev_preds[claim_id] = {
+            "claim_text": dev_data[claim_id]["claim_text"],
+            "claim_label": idx_to_label[pred],
+            "evidences": [f"evidence-{x}" for x in final_k_indices[index]]
+        }
+
+    print("Writing predictions to file...")
+    with open("output/dev-claims-predictions.json", "w") as outfile:
+        json.dump(dev_preds, outfile)
+
 
 def get_test_claim_result():
     top_k = 200
@@ -110,6 +153,8 @@ def get_test_claim_result():
     print("Writing predictions to file...")
     with open("output/test-claims-predictions.json", "w") as outfile:
         json.dump(test_preds, outfile)
+
+
 
 
 def sigmoid(x):
