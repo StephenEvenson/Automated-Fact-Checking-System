@@ -53,7 +53,9 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
     final_k_indices = []
     top_k_indices = np.array(top_k_indices)
     for i in range(len(query)):
-        final_k_indices.append(top_k_indices[i][cross_scores[i * top_k:(i + 1) * top_k].argsort()[-final_k:][::-1]])
+        query_evidence_scores = cross_scores[i * top_k:(i + 1) * top_k]
+        final_k_scores = query_evidence_scores.argsort()[-final_k:][::-1]
+        final_k_indices.append(top_k_indices[i][final_k_scores + i * top_k])
 
     np.save('data/final_k_indices.npy', final_k_indices)
     return final_k_indices
