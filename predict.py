@@ -66,6 +66,8 @@ def get_classification(model, texts):
 
 
 def get_test_claim_result():
+    top_k = 100
+    final_k = 5
     retrieve_model_path = 'output/retrieve_model'
     rerank_model_path = 'output/rerank_model'
     classifier_model_path = 'output/classifier_model'
@@ -77,9 +79,9 @@ def get_test_claim_result():
     test_evidences = list(evidence_data.values())
 
     top_k_indices = get_top_k(SentenceTransformer(retrieve_model_path), test_claims,
-                              test_evidences, top_k=100, refresh=False)
+                              test_evidences, top_k=top_k, refresh=False)
     final_k_indices = get_final_k(CrossEncoder(rerank_model_path, num_labels=1), test_claims,
-                                  test_evidences, top_k_indices, final_k=5, refresh=False)
+                                  test_evidences, top_k_indices, final_k=final_k, refresh=False)
 
     texts = []
     for index, (claim_id, data) in enumerate(test_data.items()):
@@ -91,7 +93,7 @@ def get_test_claim_result():
     classifier_model = CrossEncoder(classifier_model_path, num_labels=4, max_length=256)
     classification_score = classifier_model.predict(texts)
     classification_score = sigmoid(classification_score)
-    merged_arr = np.mean(classification_score.reshape(-1, 5, 4), axis=1)
+    merged_arr = np.mean(classification_score.reshape(-1, final_k, 4), axis=1)
     classification = np.argmax(merged_arr, axis=1)
 
     test_preds = {}
