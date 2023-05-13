@@ -1,9 +1,7 @@
 import os.path
 
-import torch
 from sentence_transformers import SentenceTransformer, losses, CrossEncoder
 from tqdm import tqdm
-from transformers import RobertaForSequenceClassification, RobertaTokenizer
 
 from dataset import get_retrieve_train_dataloader, get_rerank_train_dataloader, get_classifier_train_dataloader
 from evaluator import RetrieveNgEvaluator, RerankEvaluator, ClassifierEvaluator
@@ -19,7 +17,7 @@ def retrieve_train(epochs=100):
     dataloader = get_retrieve_train_dataloader(bi_encoder, shuffle=True, batch_size=125)
     loss_function = losses.MultipleNegativesRankingLoss(model=bi_encoder)
     evaluator = RetrieveNgEvaluator(top_k=100)
-    print("Start training...")
+    print("Start retrieve training...")
     evaluation_epochs = 20
     best_f1 = evaluator(bi_encoder)
     for epoch in tqdm(range(0, epochs, evaluation_epochs), desc="Total training epoch"):
@@ -47,7 +45,7 @@ def rerank_train(epochs=60):
         cross_encoder = CrossEncoder('distilbert-base-uncased', num_labels=1)
     dataloader = get_rerank_train_dataloader(bi_encoder, shuffle=True, batch_size=125)
     evaluator = RerankEvaluator(retrieve_model=bi_encoder, final_k=5)
-    print("Start training...")
+    print("Start rerank training...")
     cross_encoder.fit(
         train_dataloader=dataloader,
         evaluator=evaluator,
@@ -71,7 +69,7 @@ def classifier_train(epochs=10):
         classifier_model = CrossEncoder(model_name, num_labels=4)
     dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=125)
     evaluator = ClassifierEvaluator()
-    print("Start training...")
+    print("Start classifier training...")
     evaluator(classifier_model)
     classifier_model.fit(
         train_dataloader=dataloader,
