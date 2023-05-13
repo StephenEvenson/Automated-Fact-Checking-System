@@ -46,7 +46,7 @@ class RerankTrainDataset(Dataset):
         query = [data['claim_text'] for data in self.train_data.values()]
         corpus = list(self.evidence_data.values())
         print("Retrieving top k evidences for training data...")
-        self.top_k_indices = get_top_k(retrieve_model, query, corpus, top_k=10, refresh=False)
+        self.top_k_indices = get_top_k(retrieve_model, query, corpus, top_k=100, refresh=False)
 
         train_examples = []
         for index, (claim_id, data) in enumerate(self.train_data.items()):
@@ -55,8 +55,9 @@ class RerankTrainDataset(Dataset):
                             if "evidence-" + str(evidence_index) not in data['evidences']]
             for i in range(len(data['evidences'])):
                 evidence_text = self.evidence_data[data['evidences'][i]]
-                ng_evidence_text = ng_evidences[i]
                 train_examples.append(InputExample(texts=[claim_text, evidence_text], label=1))
+            for i in range(len(ng_evidences)):
+                ng_evidence_text = ng_evidences[i]
                 train_examples.append(InputExample(texts=[claim_text, ng_evidence_text], label=0))
         self.train_examples = np.array(train_examples)
 
