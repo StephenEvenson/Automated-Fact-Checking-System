@@ -2,6 +2,7 @@ import json
 import os
 import pickle
 
+import numpy as np
 import torch.cuda
 from sentence_transformers import util
 
@@ -49,5 +50,5 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
 def get_classification(model, texts):
 
     classification_scores = model.predict(texts)
-    classification = torch.argmax(classification_scores)
+    classification = np.argmax(classification_scores)
     return classification

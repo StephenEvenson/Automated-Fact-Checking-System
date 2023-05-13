@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from sentence_transformers.evaluation import SentenceEvaluator
 
@@ -85,9 +86,9 @@ class ClassifierEvaluator(SentenceEvaluator):
                 sentence_pair = [claim_text, self.evidence_data[evidence_index]]
                 texts.append(sentence_pair)
         classification = get_classification(model, texts)
-        true_labels = torch.tensor(true_labels)
+        true_labels = np.array(true_labels)
 
-        score = torch.sum(classification == true_labels).item() / len(true_labels)
+        score = np.sum(classification == true_labels).item() / len(true_labels)
         print("Classifier evaluator accuracy: ", score)
 
         return score
