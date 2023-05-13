@@ -40,9 +40,9 @@ def rerank_train(epochs=60, load_old_model=False):
     bi_encoder = SentenceTransformer(retrieve_model_path)
     if os.path.exists(model_path) and load_old_model:
         print("Loading pretrained model from {}".format(model_path))
-        cross_encoder = CrossEncoder(model_path, num_labels=1)
+        cross_encoder = CrossEncoder(model_path, num_labels=1, max_length=256)
     else:
-        cross_encoder = CrossEncoder('distilbert-base-uncased', num_labels=1)
+        cross_encoder = CrossEncoder('distilbert-base-uncased', num_labels=1, max_length=256)
     dataloader = get_rerank_train_dataloader(bi_encoder, shuffle=True, batch_size=125)
     evaluator = RerankEvaluator(retrieve_model=bi_encoder, final_k=5)
     print("Start rerank training...")

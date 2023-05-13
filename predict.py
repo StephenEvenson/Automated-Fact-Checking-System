@@ -81,7 +81,7 @@ def get_test_claim_result():
 
     top_k_indices = get_top_k(SentenceTransformer(retrieve_model_path), test_claims,
                               test_evidences, top_k=top_k, refresh=False)
-    final_k_indices = get_final_k(CrossEncoder(rerank_model_path, num_labels=1), test_claims,
+    final_k_indices = get_final_k(CrossEncoder(rerank_model_path, num_labels=1, max_length=256), test_claims,
                                   test_evidences, top_k_indices, final_k=final_k, refresh=False)
 
     texts = []
