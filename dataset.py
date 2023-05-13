@@ -92,7 +92,7 @@ class ClassifierTrainDataset(Dataset):
             for evidence_index in data['evidences']:
                 evidence_text = self.evidence_data[evidence_index]
                 train_examples.append(InputExample(texts=[claim_text, evidence_text],
-                                                   label=label_mapping[data['label']]))
+                                                   label=label_mapping[data['claim_label']]))
         self.train_examples = np.array(train_examples)
 
 
