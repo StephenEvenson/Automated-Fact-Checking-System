@@ -88,8 +88,8 @@ class ClassifierEvaluator(SentenceEvaluator):
         classification = get_classification(model, texts)
         true_labels = np.array(true_labels)
 
-        print(classification)
-        # print(true_labels)
+        print("Classification : ", classification.shape)
+        print("True labels: ", true_labels.shape)
         score = np.sum(classification == true_labels).item() / len(true_labels)
         print("Classifier evaluator accuracy: ", score)
 
