@@ -50,5 +50,5 @@ def get_final_k(model, query, corpus, top_k_indices, final_k=5, refresh=False):
 def get_classification(model, texts):
 
     classification_scores = model.predict(texts)
-    classification = np.argmax(classification_scores, dim=1)
+    classification = np.argmax(classification_scores, axis=1)
     return classification
