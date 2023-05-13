@@ -2,7 +2,7 @@ import numpy as np
 from sentence_transformers import InputExample
 from torch.utils.data import Dataset, DataLoader
 
-from predict import get_top_k, get_final_k
+from predict import get_top_k
 from preprocess import get_train_data, get_evidence_data
 
 

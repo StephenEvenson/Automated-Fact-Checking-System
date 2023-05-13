@@ -53,7 +53,8 @@ class RerankEvaluator(SentenceEvaluator):
                                        top_k=10, refresh=False)
 
     def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> float:
-        final_k_indices = get_final_k(model, self.dev_claims, self.dev_evidences, self.top_k_indices, final_k=5)
+        final_k_indices = get_final_k(model, self.dev_claims, self.dev_evidences,
+                                      self.top_k_indices, final_k=5, refresh=True)
         acc, recall, f1 = [], [], []
         for index, (claim_id, data) in enumerate(self.dev_data.items()):
             true_evidences = [int(evidence[len("evidence-"):]) for evidence in data['evidences']]
