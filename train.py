@@ -67,7 +67,7 @@ def classifier_train(epochs=10, load_old_model=False):
         classifier_model = CrossEncoder(model_path, num_labels=4, max_length=256)
     else:
         classifier_model = CrossEncoder(model_name, num_labels=4, max_length=256)
-    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=32)
+    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=16)
     evaluator = ClassifierEvaluator()
     print("Start classifier training...")
     evaluator(classifier_model)
