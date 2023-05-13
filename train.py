@@ -64,10 +64,10 @@ def classifier_train(epochs=10):
     model_name = 'roberta-large'
     if os.path.exists(model_path):
         print("Loading pretrained model from {}".format(model_path))
-        classifier_model = CrossEncoder(model_path, num_labels=4)
+        classifier_model = CrossEncoder(model_path, num_labels=4, max_length=256)
     else:
-        classifier_model = CrossEncoder(model_name, num_labels=4)
-    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=125)
+        classifier_model = CrossEncoder(model_name, num_labels=4, max_length=256)
+    dataloader = get_classifier_train_dataloader(shuffle=True, batch_size=64)
     evaluator = ClassifierEvaluator()
     print("Start classifier training...")
     evaluator(classifier_model)
