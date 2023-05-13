@@ -80,7 +80,7 @@ class ClassifierEvaluator(SentenceEvaluator):
         true_labels = []
         for index, (claim_id, data) in enumerate(self.dev_data.items()):
             claim_text = data['claim_text']
-            true_labels.append(label_mapping[data['label']])
+            true_labels.append(label_mapping[data['claim_label']])
             for evidence_index in data['evidences']:
                 sentence_pair = [claim_text, self.evidence_data[evidence_index]]
                 texts.append(sentence_pair)
