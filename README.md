@@ -53,6 +53,6 @@ Extensive experiments were conducted to evaluate the performance of the models. 
 This project demonstrated the potential of NLP techniques in building an efficient and accurate automated fact-checking system. Future work could explore different pre-trained models, address memory overflow issues, and refine preprocessing steps to further improve performance.
 
 ## References
-Zhenzhong Lan et al. (2020). ALBERT: A Lite BERT for Self-supervised Learning of Language Representations.
-Nils Reimers and Iryna Gurevych (2019). Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
-Thomas Wolf et al. (2020). Transformers: State-of-the-Art Natural Language Processing.
+- Zhenzhong Lan et al. (2020). ALBERT: A Lite BERT for Self-supervised Learning of Language Representations.
+- Nils Reimers and Iryna Gurevych (2019). Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.
+- Thomas Wolf et al. (2020). Transformers: State-of-the-Art Natural Language Processing.
