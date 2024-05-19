@@ -42,10 +42,9 @@ pip install -r requirements.txt
 ```
 
 ### Running the Code
-1. Preprocessing Data: Run preprocess.py to preprocess the claims and evidence texts.
-2. Training the Models: Execute train.py to train the retrieval and classification models.
-3. Predicting Claims: Use predict.py to predict the veracity of claims using the trained models.
-4. Evaluating the Models: Run evaluator.py to evaluate the model performance.
+```sh
+python3 main.py
+```
 
 ## Experiments and Results
 Extensive experiments were conducted to evaluate the performance of the models. The retrieve and rerank method significantly outperformed the simple vector similarity approach. The final model achieved an F1 score of 0.1744 for evidence retrieval and an accuracy of 0.3766 for claim classification, ranking 35th in the CodaLab competition.
